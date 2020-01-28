@@ -1,0 +1,142 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <body>
+    <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">Smart Weather</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="localhost:5000">Home</a></li>
+      <li><a href="#">User Guide</a></li>
+    </ul>
+  </div>
+</nav>
+    <div class="container-fluid">
+      <h1>
+        Regression
+      </h1>
+      <p>
+        Predict Max Temperature From Precip and Min Temperature
+      </p>
+
+      <div>
+        <button onClick='trainData()'>Train Data</button>
+      </div>
+      <br>
+
+      <div id='model_property'>
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th></th><th></th><th></th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div>
+                  <label><b>Accuracy: </b></label><div id="accuracy"></div>
+                </div>
+              </td>
+              <td>
+                <label><b>Correlation:</b></label>
+                <div id="correlation">
+                </div>
+              </td>
+              <td>
+                <label><b> Actual vs Predicted:</b></label>
+                <div id="actual_vs_predicted">
+                </div>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <br>
+
+      </div>
+      <br>
+      <div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><b text-align= "center">Predicted Value:</b></label><label id='predicted'> &#8451</h3>
+  </div>
+  <div class="panel-body">
+    <div id="prediction_form" class= "form-group">
+      <label><b>Precip (0-30 mm):</b></label><input type="number" id='min_temp' class= "form-control"><br>
+      <label><b>Min Temp (-1 - 40 C):</b></label><input type="number" id="precip" class= "form-control"> <br>
+      <button class="btn btn-primary" onClick='predict()' text-align= "center"><b>Predict</b></button>
+      </br></br>
+      <label></label>
+    </div>
+
+  </div>
+  </div>
+</div>
+<style>
+body {
+       background-image: url("https://images.dearborn.org/wp-content/uploads/2019/03/weather.jpg ");
+      background-repeat:no-repeat;
+     background-size:cover;
+   }
+   .panel.panel-default{
+     margin-right: 35%;
+     margin-left: 35%
+   }
+</style>
+
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){});
+
+    function trainData(){
+      $.ajax({
+              url : "/train",
+              data:JSON.stringify({}),
+              type : "POST",
+              contentType: 'application/json;',
+              success: function(response) {
+                data=JSON.parse(response);
+                $('#accuracy').html(data['accuracy']+"%");
+                $('#correlation').html(data['correlation']);
+                $('#actual_vs_predicted').html(data['actual_vs_predicted']);
+
+              },
+              error: function(error) {
+
+              }
+            });
+
+    }
+
+    function predict(){
+      let min_temp = $('#min_temp').val();
+      let precip = $('#precip').val();
+      $.ajax({
+              url : "/predict",
+              data:JSON.stringify({'min_temp': min_temp, 'precip': precip}),
+              type : "POST",
+              contentType: 'application/json;',
+              success: function(response) {
+                data=JSON.parse(response);
+                $('#predicted').html(response);
+              },
+              error: function(error) {
+
+              }
+            });
+
+    }
+  </script>
+</html>
